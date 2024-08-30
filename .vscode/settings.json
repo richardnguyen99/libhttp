@@ -1,0 +1,9 @@
+{
+  "cmake.generator": "Unix Makefiles",
+  "files.associations": {
+    "*.ejs": "ejs",
+    "lhttp_request.h": "c",
+    "unity_fixture.h": "c",
+    "unity_internals.h": "c"
+  }
+}
