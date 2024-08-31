@@ -1,20 +1,26 @@
 {
-  "configurations": [
-    {
-      "name": "Linux",
-      "includePath": [
-        "${workspaceFolder}/lib",
-        "${workspaceFolder}/include",
-        "${workspaceFolder}/src",
-        "/usr/include",
-        "/usr/local/include"
-      ],
-      "defines": [],
-      "compilerPath": "/usr/bin/gcc",
-      "intelliSenseMode": "linux-gcc-x64",
-      "cStandard": "c11",
-      "compilerArgs": ["-g", "-O0", "-Wall", "-Wextra", "-Werror"]
-    }
-  ],
-  "version": 4
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/lib",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "compilerPath": null,
+            "intelliSenseMode": "linux-gcc-x64",
+            "cStandard": "c11",
+            "compilerArgs": [
+                "-g",
+                "-O0",
+                "-Wall",
+                "-Wextra",
+                "-Werror"
+            ]
+        }
+    ],
+    "version": 4
 }

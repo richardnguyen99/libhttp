@@ -3,7 +3,10 @@
   "files.associations": {
     "*.ejs": "ejs",
     "lhttp_request.h": "c",
+    "lhttp_response.h": "c",
+    "lhttp_list.h": "c",
     "unity_fixture.h": "c",
     "unity_internals.h": "c"
-  }
+  },
+  "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

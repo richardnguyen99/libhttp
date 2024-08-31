@@ -18,32 +18,42 @@
 #define CHECK_VALID_STRING(start, end)     \
 	if (end == NULL || (end - start) <= 0) \
 	{                                      \
-		return -1;                         \
+		return LHTTP_REQUEST_ERROR;        \
 	}
 
 /**
  * @brief Parse the request line of the HTTP request message string
  * 
  * @param request An existing HTTP request object
+ * @return 0 on success, -1 on failure
  */
 static inline int __lhttp_request_parse_request_line(lhttp_request_t *request);
 
-lhttp_request_t *lhttp_request_new(size_t size)
-{
-	lhttp_request_t *request = malloc(sizeof(lhttp_request_t));
-	if (request == NULL)
-	{
-		return NULL;
-	}
+/**
+ * @brief Parse the header section of the HTTP request message string
+ * 
+ * @param request An existing HTTP request object
+ * @return 0 on success, -1 on failure
+ */
+static inline int __lhttp_request_parse_headers(lhttp_request_t *request);
 
+int lhttp_request_init(lhttp_request_t *request, size_t size)
+{
+	request->status = LHTTP_REQUEST_UNSET;
+
+	// Allocate memory for the buffer of request message
 	request->__buf     = calloc(size, sizeof(char));
 	request->__buf_len = size;
 
 	if (request->__buf == NULL)
 	{
-		free(request);
-		return NULL;
+		request->status = LHTTP_REQUEST_ERROR;
+		request->error  = LHTTP_REQUEST_ERROR_MEMORY_ALLOCATION;
+
+		return LHTTP_REQUEST_ERROR;
 	}
+
+	request->error = LHTTP_REQUEST_ERROR_NONE;
 
 	request->__request_line_start = NULL;
 	request->__request_line_end   = NULL;
@@ -58,7 +68,9 @@ lhttp_request_t *lhttp_request_new(size_t size)
 	request->__body_start         = NULL;
 	request->__body_end           = NULL;
 
-	return request;
+	request->status = LHTTP_REQUEST_PARSING_INITIALIZED;
+
+	return LHTTP_REQUEST_OK;
 }
 
 int lhttp_request_parse(lhttp_request_t *request, const char *buf, size_t size)
@@ -67,7 +79,7 @@ int lhttp_request_parse(lhttp_request_t *request, const char *buf, size_t size)
 
 	if (request == NULL || buf == NULL)
 	{
-		return -1;
+		return LHTTP_REQUEST_ERROR;
 	}
 
 	// Copy the buffer into the request
@@ -77,10 +89,17 @@ int lhttp_request_parse(lhttp_request_t *request, const char *buf, size_t size)
 
 	if (s != 0)
 	{
-		return -1;
+		return LHTTP_REQUEST_ERROR;
 	}
 
-	return 0;
+	s = __lhttp_request_parse_headers(request);
+
+	if (s != 0)
+	{
+		return LHTTP_REQUEST_ERROR;
+	}
+
+	return LHTTP_REQUEST_OK;
 }
 
 static inline int __lhttp_request_parse_request_line(lhttp_request_t *request)
@@ -92,7 +111,7 @@ static inline int __lhttp_request_parse_request_line(lhttp_request_t *request)
 	// Invalid request line
 	if (request->__request_line_end == NULL)
 	{
-		return -1;
+		return LHTTP_REQUEST_ERROR;
 	}
 
 	// Mark the boundaries of the method
@@ -130,14 +149,18 @@ static inline int __lhttp_request_parse_request_line(lhttp_request_t *request)
 void lhttp_request_free(lhttp_request_t *request)
 {
 	if (request == NULL)
-	{
 		return;
-	}
 
 	if (request->__buf != NULL)
 	{
 		free(request->__buf);
+		request->__buf     = NULL;
+		request->__buf_len = 0;
 	}
+	return;
+}
 
-	free(request);
+static inline int __lhttp_request_parse_headers(lhttp_request_t *request)
+{
+	return 0;
 }

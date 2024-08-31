@@ -2,7 +2,7 @@ BasedOnStyle:  LLVM
 # If true, clang-format will attempt to re-flow comments
 ReflowComments: false
 # The column limit.
-ColumnLimit: 100
+ColumnLimit: 80
 # Indent width for line continuations.
 ContinuationIndentWidth: 4
 # The number of columns to use for indentation.
@@ -32,8 +32,15 @@ AlignConsecutiveAssignments:
   # Continue the alignment if there are comments between assignments.
   AcrossComments: true
 
-# The brace breaking style to use.
+BinPackArguments: false
+
+# The brace breaking style to use. See BraceWrapping for more information.
 BreakBeforeBraces: Custom
+
+# Always break after an open bracket.
+AlignAfterOpenBracket: BlockIndent
+
+AllowAllArgumentsOnNextLine: false
 
 # Align array of structures with spaces to the left, like a table.
 AlignArrayOfStructures: Left
