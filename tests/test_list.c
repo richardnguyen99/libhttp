@@ -254,11 +254,136 @@ TEST(TEST_LIST, GetNode)
 	TEST_PASS_MESSAGE("GetNode passed");
 }
 
+TEST(TEST_LIST, RemoveNode)
+{
+	// Safety check that the list is initialized before removing a node
+	TEST_ASSERT_NOT_NULL_MESSAGE(list, "List is expected to be not NULL");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "List initialization is expected to be successful"
+	);
+
+	// Add some nodes to the list
+	status = lhttp_list_add(list, "Host", "localhost:8080");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Adding a node is expected to be successful"
+	);
+
+	status = lhttp_list_add(list, "Connection", "keep-alive");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Adding a node is expected to be successful"
+	);
+
+	status = lhttp_list_add(list, "User-Agent", "curl/7.68.0");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Adding a node is expected to be successful"
+	);
+
+	status = lhttp_list_add(list, "Accept", "application/json");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Adding a node is expected to be successful"
+	);
+
+	// Check the size of the list
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    4,
+	    list->__size,
+	    "List size is expected to be 4"
+	);
+
+	// Remove an existing node from the list
+	status = lhttp_list_remove(list, "User-Agent");
+
+	// Check if the status is successful
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Removing a node is expected to be successful"
+	);
+
+	// Check the size of the list
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    3,
+	    list->__size,
+	    "List size is expected to be 3"
+	);
+
+	// Remove a non-existing node from the list
+	status = lhttp_list_remove(list, "Accept-Encoding");
+
+	// Check if the status is error
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_ERROR,
+	    status,
+	    "Removing a non-existing node is expected to be an error"
+	);
+
+	// Check if the error is set correctly
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_ERROR_KEY_NOT_FOUND,
+	    list->error,
+	    "Error is expected to be key not found"
+	);
+
+	// Add a node to the list
+	status = lhttp_list_add(list, "Accept-Encoding", "gzip, deflate, br");
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Adding a node is expected to be successful"
+	);
+
+	// Remove that node from the list
+	status = lhttp_list_remove(list, "Accept-Encoding");
+
+	// Check if the status is successful
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Removing a node is expected to be successful"
+	);
+
+	// Continue removing the rest of the nodes
+	status = lhttp_list_remove(list, "Host");
+
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_OK,
+	    status,
+	    "Removing a node is expected to be successful"
+	);
+
+	// Check if the error is set correctly
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    LHTTP_LIST_ERROR_NONE,
+	    list->error,
+	    "Error is expected to be none"
+	);
+
+	// Check the size of the list
+	TEST_ASSERT_EQUAL_INT_MESSAGE(
+	    2,
+	    list->__size,
+	    "List size is expected to be 2"
+	);
+
+	TEST_PASS_MESSAGE("RemoveNode passed");
+}
+
 TEST_GROUP_RUNNER(TEST_LIST)
 {
 	RUN_TEST_CASE(TEST_LIST, InitializeList);
 	RUN_TEST_CASE(TEST_LIST, AddNode);
 	RUN_TEST_CASE(TEST_LIST, GetNode);
+	RUN_TEST_CASE(TEST_LIST, RemoveNode);
 }
 
 static void RunAllTests(void)

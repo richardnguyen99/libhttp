@@ -95,6 +95,12 @@ typedef enum lhttp_list_error_e
 	/* Value already exists in this list */
 	LHTTP_LIST_ERROR_VALUE_EXISTS,
 
+	/* Key is NULL while performing list operations */
+	LHTTP_LIST_ERROR_KEY_NULL,
+
+	/* Value is NULL while performing list operations */
+	LHTTP_LIST_ERROR_VALUE_NULL,
+
 	/* Generic and/or unknown error */
 	LHTTP_LIST_UNKNOWN_ERROR
 } lhttp_list_error_t;
@@ -184,6 +190,19 @@ lhttp_list_status_t lhttp_list_add(lhttp_list_t *list, const char *key, const ch
  * this operation, regardless of `key` exists or not.
  */
 lhttp_list_status_t lhttp_list_get(lhttp_list_t *list, const char *key, char **value);
+
+/**
+ * @brief Remove the key-value pair with the `key` from `list`
+ * 
+ * @param list A pointer to the HTTP list structure
+ * @param key A key string to be searched in the list
+ * @return 0 on success. -1 on failure otherwise and the error code is set.
+ * 
+ * @note The `key` is used to search the key-value pair in the list. If the key
+ * is found, the key-value pair will be removed from the list. If the caller is 
+ * currently holding a pointer to the value, the value will be invalidated.
+ */
+lhttp_list_status_t lhttp_list_remove(lhttp_list_t *list, const char *key);
 
 /**
  * @brief Free allocated memory of the HTTP list structure

@@ -140,6 +140,44 @@ lhttp_list_get(lhttp_list_t *list, const char *key, char **value)
 	return LHTTP_LIST_ERROR;
 }
 
+lhttp_list_status_t lhttp_list_remove(lhttp_list_t *list, const char *key)
+{
+	if (list->state != LHTTP_LIST_INITIALIZED)
+	{
+		list->error = LHTTP_LIST_ERROR_NOT_INITIALIZED;
+		return LHTTP_LIST_ERROR;
+	}
+
+	struct __lhttp_node_s *prev = list->__head;
+	struct __lhttp_node_s *curr = list->__head->__next;
+
+	while (curr != NULL)
+	{
+		if (curr->__key == NULL)
+		{
+			list->error = LHTTP_LIST_ERROR_KEY_NULL;
+			return LHTTP_LIST_ERROR;
+		}
+
+		if (strcmp(curr->__key, key) == 0)
+		{
+			printf("key: %s,%s\n", curr->__key, key);
+			prev->__next = curr->__next;
+			__lhttp_node_free(curr);
+			list->__size--;
+
+			list->error = LHTTP_LIST_ERROR_NONE;
+			return LHTTP_LIST_OK;
+		}
+
+		prev = curr;
+		curr = curr->__next;
+	}
+
+	list->error = LHTTP_LIST_ERROR_KEY_NOT_FOUND;
+	return LHTTP_LIST_ERROR;
+}
+
 void lhttp_list_free(lhttp_list_t *list)
 {
 	if (list->state == LHTTP_LIST_INITIALIZED)
